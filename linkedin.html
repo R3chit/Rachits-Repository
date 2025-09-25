@@ -100,6 +100,7 @@
         .post { border-top: 1px solid #f1f3f5; }
         .post-header { display: flex; gap: 12px; align-items: center; }
         .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: #d1e9ff; display: inline-flex; align-items: center; justify-content: center; color: #0a66c2; font-weight: 800; }
+        .post-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
         .post-name { font-weight: 700; }
         .post-title { font-size: 12px; color: #6b7280; }
         .post-time { font-size: 12px; color: #98a2b3; }
@@ -159,14 +160,17 @@
         <section class="center">
             <div class="card">
                 <div class="section composer" style="gap:8px; flex-wrap: wrap;">
-                    <div class="post-avatar">RM</div>
+                    <div class="post-avatar"><img :src="avatarSrc" alt="Rachit More" /></div>
                     <input v-model="draft" placeholder="Start a post" @keyup.enter="publish" />
                     <input v-model="imageUrl" placeholder="Image URL (optional)" @keyup.enter="publish" style="flex:1" />
                     <button type="button" @click="publish" :disabled="!canPublish">Post</button>
                 </div>
                 <div v-for="post in posts" :key="post.id" class="section post">
                     <div class="post-header">
-                        <div class="post-avatar">{{ initials(post.author) }}</div>
+                        <div class="post-avatar">
+                            <img v-if="isRachit(post.author)" :src="avatarSrc" alt="Rachit More" />
+                            <span v-else>{{ initials(post.author) }}</span>
+                        </div>
                         <div>
                             <div class="post-name">{{ post.author }}</div>
                             <div class="post-title">{{ post.subtitle }}</div>
@@ -239,6 +243,9 @@
         methods: {
             initials(name) {
                 return name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+            },
+            isRachit(name) {
+                return (name || '').toLowerCase().replace(/\s+/g,' ').trim() === 'rachit more';
             },
             publish() {
                 if (!this.canPublish) return;
