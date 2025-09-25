@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachit More | LinkedIn-like Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page layout overrides */
+        body {
+            background: #eef3f8;
+            color: #1f2328;
+        }
+        .app {
+            width: 100%;
+            max-width: 1128px;
+            margin: 24px auto;
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 24px;
+            padding: 0 16px;
+        }
+        @media (max-width: 1024px) {
+            .app { grid-template-columns: 1fr; }
+            .right { display: none; }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+            border: 1px solid #e6e8eb;
+            overflow: hidden;
+        }
+        .card .section { padding: 16px; }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #fff;
+            border-bottom: 1px solid #e6e8eb;
+        }
+        .header-inner {
+            max-width: 1128px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 16px;
+        }
+        .brand { font-weight: 800; letter-spacing: 0.3px; }
+        .search {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #eef3f8;
+            border-radius: 4px;
+            padding: 6px 10px;
+            border: 1px solid #e6e8eb;
+        }
+        .search input {
+            border: 0; outline: 0; background: transparent; width: 100%;
+            font-size: 14px; color: #1f2328;
+        }
+
+        /* Left sidebar: profile */
+        .profile-cover {
+            height: 56px; background: linear-gradient(90deg,#0a66c2,#33a0ff);
+        }
+        .avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            border: 3px solid #fff; margin-top: -36px; margin-left: 16px;
+            background: #d1e9ff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; color: #0a66c2;
+        }
+        .name { font-size: 18px; font-weight: 700; margin-top: 8px; }
+        .title { font-size: 14px; color: #6b7280; }
+        .meta { font-size: 12px; color: #667085; margin-top: 4px; }
+
+        /* Feed composer */
+        .composer {
+            display: flex; gap: 12px; align-items: center;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .composer input {
+            flex: 1; border: 1px solid #e6e8eb; border-radius: 999px; padding: 10px 14px;
+        }
+        .composer button { border: 0; background: #0a66c2; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; }
+
+        /* Post */
+        .post { border-top: 1px solid #f1f3f5; }
+        .post-header { display: flex; gap: 12px; align-items: center; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: #d1e9ff; display: inline-flex; align-items: center; justify-content: center; color: #0a66c2; font-weight: 800; }
+        .post-name { font-weight: 700; }
+        .post-title { font-size: 12px; color: #6b7280; }
+        .post-time { font-size: 12px; color: #98a2b3; }
+        .post-body { margin-top: 8px; line-height: 1.5; }
+        .post-actions { display: flex; gap: 12px; margin-top: 8px; }
+        .btn {
+            border: 1px solid #e6e8eb; background: #fff; padding: 6px 10px; border-radius: 6px; color: #0a66c2; font-weight: 600;
+        }
+
+        /* Right sidebar */
+        .right .item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .right .item + .item { border-top: 1px solid #f1f3f5; }
+        .right h3 { font-size: 14px; margin: 0 0 8px 0; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px; }
+        .muted { color: #667085; font-size: 12px; }
+        a { color: #0a66c2; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="brand">in</div>
+            <div class="search"><input placeholder="Search" /></div>
+            <nav class="nav muted">Home · My Network · Jobs · Messaging · Notifications</nav>
+        </div>
+    </header>
+    <main class="app">
+        <aside class="left">
+            <section class="card">
+                <div class="profile-cover"></div>
+                <div class="section">
+                    <div class="avatar">RM</div>
+                    <div class="name">Rachit More</div>
+                    <div class="title">Final-year B.E. Computer Science Engineering</div>
+                    <div class="meta">Pune, India · Open to opportunities</div>
+                </div>
+            </section>
+            <section class="card" style="margin-top:16px">
+                <div class="section">
+                    <div class="muted">Profile Highlights</div>
+                    <ul style="margin:8px 0 0 18px; padding:0;">
+                        <li>Skills: JavaScript, Python, HTML/CSS, Vue</li>
+                        <li>Interests: Web Dev, AI/ML, Open Source</li>
+                        <li>Looking for: Frontend Internships/Full-time</li>
+                    </ul>
+                </div>
+            </section>
+        </aside>
+
+        <section class="center">
+            <div class="card">
+                <div class="section composer">
+                    <div class="post-avatar">RM</div>
+                    <input placeholder="Start a post" />
+                    <button type="button">Post</button>
+                </div>
+                <div class="section post">
+                    <div class="post-header">
+                        <div class="post-avatar">RM</div>
+                        <div>
+                            <div class="post-name">Rachit More</div>
+                            <div class="post-title">CSE Student · Building projects and learning daily</div>
+                            <div class="post-time">2h · Public</div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        Just completed a responsive landing page and explored basic Vue components. Next up: integrating an API and deploying!
+                    </div>
+                    <div class="post-actions">
+                        <button class="btn">Like</button>
+                        <button class="btn">Comment</button>
+                        <button class="btn">Share</button>
+                        <button class="btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="right">
+            <section class="card">
+                <div class="section">
+                    <h3>Trending</h3>
+                    <div class="item"><span>Vue 3 Composition API</span><span>1,234 readers</span></div>
+                    <div class="item"><span>Interview Prep: DSA</span><span>980 readers</span></div>
+                    <div class="item"><span>Deploying with Vite</span><span>742 readers</span></div>
+                </div>
+            </section>
+            <section class="card" style="margin-top:16px">
+                <div class="section">
+                    <h3>People you may know</h3>
+                    <div class="item"><span>Frontend Devs · Pune</span><a href="#">Connect</a></div>
+                    <div class="item"><span>AI/ML Learners · India</span><a href="#">Connect</a></div>
+                    <div class="item"><span>Open Source Clubs</span><a href="#">Follow</a></div>
+                </div>
+            </section>
+        </aside>
+    </main>
+</body>
+</html>
+
