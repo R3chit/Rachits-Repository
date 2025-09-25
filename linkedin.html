@@ -6,25 +6,28 @@
     <title>Rachit More | Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        :root { --bg: #f7f9fc; --bg-grad: linear-gradient(180deg,#eef3f8 0%, #f7f9fc 100%); --text: #1f2328; --muted: #667085; --brand: #0a66c2; --card: #ffffff; --border: #e6e8eb; --elev: rgba(16,24,40,0.06); --sidebar-bg:#0b1f36; --sidebar-bg-hover:#123559; --sidebar-text:#c9d6e6; }
+        [data-theme="dark"] { --bg:#0e1520; --bg-grad: linear-gradient(180deg,#0e1520 0%, #0b1220 100%); --text:#e6edf3; --muted:#9aa7b3; --brand:#63b3ff; --card:#0f1b2d; --border:#1f2b3b; --elev: rgba(0,0,0,0.4); --sidebar-bg:#0a1220; --sidebar-bg-hover:#101a2c; --sidebar-text:#b8c7d9; }
         /* Page layout overrides */
-        body {
-            background: linear-gradient(180deg,#eef3f8 0%, #f7f9fc 100%);
-            color: #1f2328;
-        }
+        body { background: var(--bg-grad); color: var(--text); }
         .layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
-        .sidebar { position: sticky; top: 0; align-self: start; height: 100vh; background: #0b1f36; color: #c9d6e6; padding: 16px 12px; }
+        .sidebar { position: sticky; top: 0; align-self: start; height: 100vh; background: var(--sidebar-bg); color: var(--sidebar-text); padding: 16px 12px; transition: width .2s ease; }
         .sidebar .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #fff; }
         .sidebar nav { margin-top: 16px; display: grid; gap: 6px; }
-        .side-link { padding: 10px 12px; border-radius: 8px; color: #c9d6e6; }
-        .side-link:hover, .side-link.active { background: #123559; color: #fff; }
+        .side-link { padding: 10px 12px; border-radius: 8px; color: var(--sidebar-text); display: flex; align-items: center; gap: 10px; }
+        .side-link:hover, .side-link.active { background: var(--sidebar-bg-hover); color: #fff; }
+        .sidebar .label { display: inline; }
+        body.sidebar-collapsed .layout { grid-template-columns: 72px 1fr; }
+        body.sidebar-collapsed .sidebar { width: 72px; }
+        body.sidebar-collapsed .sidebar .label, body.sidebar-collapsed .sidebar .name { display: none; }
         .app { width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px; display: grid; gap: 24px; }
         @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; } }
 
         .card {
-            background: #fff;
+            background: var(--card);
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(16,24,40,0.06);
-            border: 1px solid #e6e8eb;
+            box-shadow: 0 8px 24px var(--elev);
+            border: 1px solid var(--border);
             overflow: hidden;
             transition: transform .2s ease, box-shadow .2s ease;
         }
@@ -39,8 +42,8 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            background: #fff;
-            border-bottom: 1px solid #e6e8eb;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
             backdrop-filter: saturate(120%) blur(6px);
             box-shadow: 0 2px 12px rgba(16,24,40,0.05);
         }
@@ -52,7 +55,7 @@
             gap: 16px;
             padding: 8px 16px;
         }
-        .brand { font-weight: 800; letter-spacing: 0.3px; color: #0a66c2; }
+        .brand { font-weight: 800; letter-spacing: 0.3px; color: var(--brand); }
         .search {
             flex: 1;
             display: flex;
@@ -60,14 +63,16 @@
             background: #eef3f8;
             border-radius: 4px;
             padding: 6px 10px;
-            border: 1px solid #e6e8eb;
+            border: 1px solid var(--border);
             transition: box-shadow .2s ease, background .2s ease;
         }
         .search input {
             border: 0; outline: 0; background: transparent; width: 100%;
-            font-size: 14px; color: #1f2328;
+            font-size: 14px; color: var(--text);
         }
         .search:focus-within { background: #e6f0f9; box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
+        .header-actions { display: flex; gap: 8px; }
+        .chip { border: 1px solid var(--border); background: var(--card); color: var(--text); padding: 8px 10px; border-radius: 8px; cursor: pointer; }
 
         /* Profile card */
         .profile-cover { height: 120px; background: #dce6f1; position: relative; overflow: hidden; }
@@ -88,7 +93,7 @@
             transition: box-shadow .2s ease;
         }
         .composer input:focus { box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
-        .composer button { border: 0; background: #0a66c2; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; transition: background .2s ease; }
+        .composer button { border: 0; background: var(--brand); color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; transition: background .2s ease; }
         .composer button:hover { background: #004182; }
 
         /* Post */
@@ -100,11 +105,11 @@
         .post-title { font-size: 12px; color: #6b7280; }
         .post-time { font-size: 12px; color: #98a2b3; }
         .post-body { margin-top: 8px; line-height: 1.6; }
-        .post-media { margin-top: 10px; border-radius: 10px; overflow: hidden; border: 1px solid #e6e8eb; }
+        .post-media { margin-top: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
         .post-media img { width: 100%; height: auto; display: block; }
         .post-actions { display: flex; gap: 12px; margin-top: 8px; }
         .btn {
-            border: 1px solid #e6e8eb; background: #fff; padding: 6px 10px; border-radius: 6px; color: #0a66c2; font-weight: 600;
+            border: 1px solid var(--border); background: var(--card); padding: 6px 10px; border-radius: 6px; color: var(--brand); font-weight: 600;
             transition: transform .05s ease, background .2s ease, border-color .2s ease;
         }
         .btn:hover { background: #f3f7fb; border-color: #d4dbe3; }
@@ -131,6 +136,10 @@
             <div class="brand">Dashboard</div>
             <div class="search"><input placeholder="Search in dashboard" /></div>
             <nav class="nav muted">Overview · Feed · Trending · Contacts</nav>
+            <div class="header-actions">
+                <button class="chip" id="toggle-theme">Toggle Dark</button>
+                <button class="chip" id="toggle-sidebar">Collapse Sidebar</button>
+            </div>
         </div>
     </header>
     <div class="layout">
@@ -309,6 +318,26 @@
     </main>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script>
+    // Persisted UI state: theme + sidebar
+    (function(){
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+        const savedCollapsed = localStorage.getItem('sidebarCollapsed') === '1';
+        if (savedCollapsed) document.body.classList.add('sidebar-collapsed');
+        window.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('toggle-theme');
+            const sideBtn = document.getElementById('toggle-sidebar');
+            if (themeBtn) themeBtn.addEventListener('click', () => {
+                const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', cur);
+                localStorage.setItem('theme', cur);
+            });
+            if (sideBtn) sideBtn.addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
+            });
+        });
+    })();
     const { createApp } = Vue;
     createApp({
         data() {
