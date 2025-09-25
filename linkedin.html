@@ -136,7 +136,9 @@
             <section class="card">
                 <div class="profile-cover"></div>
                 <div class="section">
-                    <div class="avatar">RM</div>
+                    <div class="avatar">
+                        <img :src="avatarSrc" alt="Rachit More avatar" />
+                    </div>
                     <div class="name">Rachit More</div>
                     <div class="title">Final-year B.E. Computer Science Engineering</div>
                     <div class="meta">Pune, India · Open to opportunities</div>
@@ -216,6 +218,7 @@
             return {
                 draft: '',
                 imageUrl: '',
+                avatarSrc: 'assets/rachit.jpg',
                 posts: [
                     {
                         id: 1,
