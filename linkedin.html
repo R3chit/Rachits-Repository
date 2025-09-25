@@ -8,7 +8,7 @@
     <style>
         /* Page layout overrides */
         body {
-            background: #eef3f8;
+            background: linear-gradient(180deg,#eef3f8 0%, #f7f9fc 100%);
             color: #1f2328;
         }
         .app {
@@ -27,10 +27,15 @@
 
         .card {
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(16,24,40,0.06);
             border: 1px solid #e6e8eb;
             overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(16,24,40,0.10);
         }
         .card .section { padding: 16px; }
 
@@ -41,6 +46,8 @@
             z-index: 10;
             background: #fff;
             border-bottom: 1px solid #e6e8eb;
+            backdrop-filter: saturate(120%) blur(6px);
+            box-shadow: 0 2px 12px rgba(16,24,40,0.05);
         }
         .header-inner {
             max-width: 1128px;
@@ -50,7 +57,7 @@
             gap: 16px;
             padding: 8px 16px;
         }
-        .brand { font-weight: 800; letter-spacing: 0.3px; }
+        .brand { font-weight: 800; letter-spacing: 0.3px; color: #0a66c2; }
         .search {
             flex: 1;
             display: flex;
@@ -59,15 +66,17 @@
             border-radius: 4px;
             padding: 6px 10px;
             border: 1px solid #e6e8eb;
+            transition: box-shadow .2s ease, background .2s ease;
         }
         .search input {
             border: 0; outline: 0; background: transparent; width: 100%;
             font-size: 14px; color: #1f2328;
         }
+        .search:focus-within { background: #e6f0f9; box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
 
         /* Left sidebar: profile */
         .profile-cover {
-            height: 56px; background: linear-gradient(90deg,#0a66c2,#33a0ff);
+            height: 72px; background: linear-gradient(90deg,#0a66c2,#33a0ff);
         }
         .avatar {
             width: 72px; height: 72px; border-radius: 50%;
@@ -85,8 +94,11 @@
         }
         .composer input {
             flex: 1; border: 1px solid #e6e8eb; border-radius: 999px; padding: 10px 14px;
+            transition: box-shadow .2s ease;
         }
-        .composer button { border: 0; background: #0a66c2; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; }
+        .composer input:focus { box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
+        .composer button { border: 0; background: #0a66c2; color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; transition: background .2s ease; }
+        .composer button:hover { background: #004182; }
 
         /* Post */
         .post { border-top: 1px solid #f1f3f5; }
@@ -95,11 +107,14 @@
         .post-name { font-weight: 700; }
         .post-title { font-size: 12px; color: #6b7280; }
         .post-time { font-size: 12px; color: #98a2b3; }
-        .post-body { margin-top: 8px; line-height: 1.5; }
+        .post-body { margin-top: 8px; line-height: 1.6; }
         .post-actions { display: flex; gap: 12px; margin-top: 8px; }
         .btn {
             border: 1px solid #e6e8eb; background: #fff; padding: 6px 10px; border-radius: 6px; color: #0a66c2; font-weight: 600;
+            transition: transform .05s ease, background .2s ease, border-color .2s ease;
         }
+        .btn:hover { background: #f3f7fb; border-color: #d4dbe3; }
+        .btn:active { transform: translateY(1px); }
 
         /* Right sidebar */
         .right .item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
@@ -107,6 +122,7 @@
         .right h3 { font-size: 14px; margin: 0 0 8px 0; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px; }
         .muted { color: #667085; font-size: 12px; }
         a { color: #0a66c2; text-decoration: none; }
+        .stats { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #667085; }
     </style>
 </head>
 <body>
@@ -117,7 +133,7 @@
             <nav class="nav muted">Home · My Network · Jobs · Messaging · Notifications</nav>
         </div>
     </header>
-    <main class="app">
+    <main id="app" class="app">
         <aside class="left">
             <section class="card">
                 <div class="profile-cover"></div>
@@ -144,24 +160,26 @@
             <div class="card">
                 <div class="section composer">
                     <div class="post-avatar">RM</div>
-                    <input placeholder="Start a post" />
-                    <button type="button">Post</button>
+                    <input v-model="draft" placeholder="Start a post" @keyup.enter="publish" />
+                    <button type="button" @click="publish" :disabled="!canPublish">Post</button>
                 </div>
-                <div class="section post">
+                <div v-for="post in posts" :key="post.id" class="section post">
                     <div class="post-header">
-                        <div class="post-avatar">RM</div>
+                        <div class="post-avatar">{{ initials(post.author) }}</div>
                         <div>
-                            <div class="post-name">Rachit More</div>
-                            <div class="post-title">CSE Student · Building projects and learning daily</div>
-                            <div class="post-time">2h · Public</div>
+                            <div class="post-name">{{ post.author }}</div>
+                            <div class="post-title">{{ post.subtitle }}</div>
+                            <div class="post-time">{{ post.time }}</div>
                         </div>
                     </div>
-                    <div class="post-body">
-                        Just completed a responsive landing page and explored basic Vue components. Next up: integrating an API and deploying!
+                    <div class="post-body">{{ post.body }}</div>
+                    <div class="stats">
+                        <span>{{ post.likes }} likes</span>
+                        <span>{{ post.comments.length }} comments</span>
                     </div>
                     <div class="post-actions">
-                        <button class="btn">Like</button>
-                        <button class="btn">Comment</button>
+                        <button class="btn" @click="like(post)">Like</button>
+                        <button class="btn" @click="comment(post)">Comment</button>
                         <button class="btn">Share</button>
                         <button class="btn">Send</button>
                     </div>
@@ -188,6 +206,55 @@
             </section>
         </aside>
     </main>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                draft: '',
+                posts: [
+                    {
+                        id: 1,
+                        author: 'Rachit More',
+                        subtitle: 'CSE Student · Building projects and learning daily',
+                        time: '2h · Public',
+                        body: 'Just completed a responsive landing page and explored basic Vue components. Next up: integrating an API and deploying!',
+                        likes: 12,
+                        comments: [{ id: 1, text: 'Great work!' }]
+                    }
+                ]
+            };
+        },
+        computed: {
+            canPublish() { return this.draft.trim().length > 0; }
+        },
+        methods: {
+            initials(name) {
+                return name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+            },
+            publish() {
+                if (!this.canPublish) return;
+                const now = new Date();
+                this.posts.unshift({
+                    id: Date.now(),
+                    author: 'Rachit More',
+                    subtitle: 'CSE Student · Building projects and learning daily',
+                    time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · Just now',
+                    body: this.draft.trim(),
+                    likes: 0,
+                    comments: []
+                });
+                this.draft = '';
+            },
+            like(post) { post.likes += 1; },
+            comment(post) {
+                const text = prompt('Write a comment:');
+                if (text && text.trim()) post.comments.push({ id: Date.now(), text: text.trim() });
+            }
+        }
+    }).mount('#app');
+    </script>
 </body>
 </html>
 
