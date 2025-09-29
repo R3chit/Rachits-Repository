@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Auto-push the current branch to origin after every successful commit.
+# This hook runs locally and requires that you are already authenticated for HTTPS.
+
+set -eu
+
+# Detect current branch name
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# Only push named branches (skip if HEAD is detached)
+if [ "$branch" = "HEAD" ]; then
+    exit 0
+fi
+
+# Default remote
+remote="origin"
+
+# Push quietly; remove --quiet to see output
+git push -u "$remote" "$branch" >/dev/null 2>&1 || true
+
+exit 0
+

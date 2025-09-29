@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachit More | Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root { --bg: #f7f9fc; --bg-grad: linear-gradient(180deg,#eef3f8 0%, #f7f9fc 100%); --text: #1f2328; --muted: #667085; --brand: #0a66c2; --card: #ffffff; --border: #e6e8eb; --elev: rgba(16,24,40,0.06); --sidebar-bg:#0b1f36; --sidebar-bg-hover:#123559; --sidebar-text:#c9d6e6; }
+        [data-theme="dark"] { --bg:#0e1520; --bg-grad: linear-gradient(180deg,#0e1520 0%, #0b1220 100%); --text:#e6edf3; --muted:#9aa7b3; --brand:#63b3ff; --card:#0f1b2d; --border:#1f2b3b; --elev: rgba(0,0,0,0.4); --sidebar-bg:#0a1220; --sidebar-bg-hover:#101a2c; --sidebar-text:#b8c7d9; }
+        /* Page layout overrides */
+        body { background: var(--bg-grad); color: var(--text); }
+        .layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+        .sidebar { position: sticky; top: 0; align-self: start; height: 100vh; background: var(--sidebar-bg); color: var(--sidebar-text); padding: 16px 12px; transition: width .2s ease; }
+        .sidebar .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #fff; }
+        .sidebar nav { margin-top: 16px; display: grid; gap: 6px; }
+        .side-link { padding: 10px 12px; border-radius: 8px; color: var(--sidebar-text); display: flex; align-items: center; gap: 10px; }
+        .side-link:hover, .side-link.active { background: var(--sidebar-bg-hover); color: #fff; }
+        .sidebar .label { display: inline; }
+        body.sidebar-collapsed .layout { grid-template-columns: 72px 1fr; }
+        body.sidebar-collapsed .sidebar { width: 72px; }
+        body.sidebar-collapsed .sidebar .label, body.sidebar-collapsed .sidebar .name { display: none; }
+        .app { width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px; display: grid; gap: 24px; }
+        @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { position: static; height: auto; } }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--elev);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(16,24,40,0.10);
+        }
+        .card .section { padding: 16px; }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: saturate(120%) blur(6px);
+            box-shadow: 0 2px 12px rgba(16,24,40,0.05);
+        }
+        .header-inner {
+            max-width: 1128px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 16px;
+        }
+        .brand { font-weight: 800; letter-spacing: 0.3px; color: var(--brand); }
+        .search {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #eef3f8;
+            border-radius: 4px;
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            transition: box-shadow .2s ease, background .2s ease;
+        }
+        .search input {
+            border: 0; outline: 0; background: transparent; width: 100%;
+            font-size: 14px; color: var(--text);
+        }
+        .search:focus-within { background: #e6f0f9; box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
+        .header-actions { display: flex; gap: 8px; }
+        .chip { border: 1px solid var(--border); background: var(--card); color: var(--text); padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+
+        /* Profile card */
+        .profile-cover { height: 120px; background: #dce6f1; position: relative; overflow: hidden; }
+        .profile-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; margin-top: -40px; margin-left: 16px; background: #d1e9ff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; color: #0a66c2; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .name { font-size: 18px; font-weight: 700; margin-top: 8px; }
+        .title { font-size: 14px; color: #6b7280; }
+        .meta { font-size: 12px; color: #667085; margin-top: 4px; }
+
+        /* Feed composer */
+        .composer {
+            display: flex; gap: 12px; align-items: center;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .composer input {
+            flex: 1; border: 1px solid #e6e8eb; border-radius: 999px; padding: 10px 14px;
+            transition: box-shadow .2s ease;
+        }
+        .composer input:focus { box-shadow: 0 0 0 3px rgba(10,102,194,.12); }
+        .composer button { border: 0; background: var(--brand); color: #fff; padding: 10px 14px; border-radius: 999px; font-weight: 600; transition: background .2s ease; }
+        .composer button:hover { background: #004182; }
+
+        /* Post */
+        .post { border-top: 1px solid #f1f3f5; }
+        .post-header { display: flex; gap: 12px; align-items: center; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: #d1e9ff; display: inline-flex; align-items: center; justify-content: center; color: #0a66c2; font-weight: 800; }
+        .post-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+        .post-name { font-weight: 700; }
+        .post-title { font-size: 12px; color: #6b7280; }
+        .post-time { font-size: 12px; color: #98a2b3; }
+        .post-body { margin-top: 8px; line-height: 1.6; }
+        .post-media { margin-top: 10px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+        .post-media img { width: 100%; height: auto; display: block; }
+        .post-actions { display: flex; gap: 12px; margin-top: 8px; }
+        .btn {
+            border: 1px solid var(--border); background: var(--card); padding: 6px 10px; border-radius: 6px; color: var(--brand); font-weight: 600;
+            transition: transform .05s ease, background .2s ease, border-color .2s ease;
+        }
+        .btn:hover { background: #f3f7fb; border-color: #d4dbe3; }
+        .btn:active { transform: translateY(1px); }
+
+        /* Dashboard */
+        .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+        .kpi { padding: 16px; background: #fff; border: 1px solid #e6e8eb; border-radius: 12px; box-shadow: 0 4px 16px rgba(16,24,40,.05); }
+        .kpi .label { font-size: 12px; color: #667085; }
+        .kpi .value { font-size: 26px; font-weight: 800; margin-top: 6px; }
+        .content-grid { display: grid; grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: start; }
+        .panel-title { font-size: 14px; color: #667085; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .6px; }
+        .right .item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .right .item + .item { border-top: 1px solid #f1f3f5; }
+        .right h3 { font-size: 14px; margin: 0 0 8px 0; color: #6b7280; text-transform: uppercase; letter-spacing: 0.6px; }
+        .muted { color: #667085; font-size: 12px; }
+        a { color: #0a66c2; text-decoration: none; }
+        .stats { display: flex; gap: 16px; margin-top: 8px; font-size: 12px; color: #667085; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="brand">Dashboard</div>
+            <div class="search"><input placeholder="Search in dashboard" /></div>
+            <nav class="nav muted">Overview · Feed · Trending · Contacts</nav>
+            <div class="header-actions">
+                <button class="chip" id="toggle-theme">Toggle Dark</button>
+                <button class="chip" id="toggle-sidebar">Collapse Sidebar</button>
+            </div>
+        </div>
+    </header>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo"><span style="background:#0a66c2;color:#fff;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;">R</span> Rachit More</div>
+            <nav>
+                <a class="side-link active" href="#">Overview</a>
+                <a class="side-link" href="#">My Feed</a>
+                <a class="side-link" href="#">Messages</a>
+                <a class="side-link" href="#">Connections</a>
+                <a class="side-link" href="#">Settings</a>
+            </nav>
+        </aside>
+        <main id="app" class="app">
+            <section class="kpis">
+                <div class="kpi">
+                    <div class="label">Profile Views</div>
+                    <div class="value">1,245</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Post Impressions</div>
+                    <div class="value">8,531</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Connections</div>
+                    <div class="value">467</div>
+                </div>
+                <div class="kpi">
+                    <div class="label">Messages</div>
+                    <div class="value">12</div>
+                </div>
+            </section>
+            <section class="content-grid">
+                <div>
+                    <div class="panel-title">My Feed</div>
+                    <div class="card">
+                        <div class="section composer" style="gap:8px; flex-wrap: wrap;">
+                            <div class="post-avatar"><img :src="avatarSrc" alt="Rachit More" /></div>
+                            <input v-model="draft" placeholder="Start a post" @keyup.enter="publish" />
+                            <input v-model="imageUrl" placeholder="Image URL (optional)" @keyup.enter="publish" style="flex:1" />
+                            <button type="button" @click="publish" :disabled="!canPublish">Post</button>
+                        </div>
+                        <div v-for="post in posts" :key="post.id" class="section post">
+                            <div class="post-header">
+                                <div class="post-avatar">
+                                    <img v-if="isRachit(post.author)" :src="avatarSrc" alt="Rachit More" />
+                                    <span v-else>{{ initials(post.author) }}</span>
+                                </div>
+                                <div>
+                                    <div class="post-name">{{ post.author }}</div>
+                                    <div class="post-title">{{ post.subtitle }}</div>
+                                    <div class="post-time">{{ post.time }}</div>
+                                </div>
+                            </div>
+                            <div class="post-body">{{ post.body }}</div>
+                            <div v-if="post.image" class="post-media">
+                                <img :src="post.image" alt="post image" loading="lazy" />
+                            </div>
+                            <div class="stats">
+                                <span>{{ post.likes }} likes</span>
+                                <span>{{ post.comments.length }} comments</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="btn" @click="like(post)">Like</button>
+                                <button class="btn" @click="comment(post)">Comment</button>
+                                <button class="btn">Share</button>
+                                <button class="btn">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="panel-title">Profile</div>
+                    <section class="card">
+                        <div class="profile-cover"></div>
+                        <div class="section">
+                            <div class="avatar">
+                                <img :src="avatarSrc" alt="Rachit More avatar" />
+                            </div>
+                            <div class="name">Rachit More</div>
+                            <div class="title">Final-year B.E. Computer Science Engineering</div>
+                            <div class="meta">Pune, India · Open to opportunities</div>
+                        </div>
+                    </section>
+                    <section class="card" style="margin-top:16px">
+                        <div class="section">
+                            <h3>Trending</h3>
+                            <div class="item"><span>Vue 3 Composition API</span><span>1,234 readers</span></div>
+                            <div class="item"><span>Interview Prep: DSA</span><span>980 readers</span></div>
+                            <div class="item"><span>Deploying with Vite</span><span>742 readers</span></div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </div>
+            <section class="card">
+                <div class="profile-cover"></div>
+                <div class="section">
+                    <div class="avatar">
+                        <img :src="avatarSrc" alt="Rachit More avatar" />
+                    </div>
+                    <div class="name">Rachit More</div>
+                    <div class="title">Final-year B.E. Computer Science Engineering</div>
+                    <div class="meta">Pune, India · Open to opportunities</div>
+                </div>
+            </section>
+            <section class="card" style="margin-top:16px">
+                <div class="section">
+                    <div class="muted">Profile Highlights</div>
+                    <ul style="margin:8px 0 0 18px; padding:0;">
+                        <li>Skills: JavaScript, Python, HTML/CSS, Vue</li>
+                        <li>Interests: Web Dev, AI/ML, Open Source</li>
+                        <li>Looking for: Frontend Internships/Full-time</li>
+                    </ul>
+                </div>
+            </section>
+        </aside>
+
+        <section class="center">
+            <div class="card">
+                <div class="section composer" style="gap:8px; flex-wrap: wrap;">
+                    <div class="post-avatar"><img :src="avatarSrc" alt="Rachit More" /></div>
+                    <input v-model="draft" placeholder="Start a post" @keyup.enter="publish" />
+                    <input v-model="imageUrl" placeholder="Image URL (optional)" @keyup.enter="publish" style="flex:1" />
+                    <button type="button" @click="publish" :disabled="!canPublish">Post</button>
+                </div>
+                <div v-for="post in posts" :key="post.id" class="section post">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <img v-if="isRachit(post.author)" :src="avatarSrc" alt="Rachit More" />
+                            <span v-else>{{ initials(post.author) }}</span>
+                        </div>
+                        <div>
+                            <div class="post-name">{{ post.author }}</div>
+                            <div class="post-title">{{ post.subtitle }}</div>
+                            <div class="post-time">{{ post.time }}</div>
+                        </div>
+                    </div>
+                    <div class="post-body">{{ post.body }}</div>
+                    <div v-if="post.image" class="post-media">
+                        <img :src="post.image" alt="post image" loading="lazy" />
+                    </div>
+                    <div class="stats">
+                        <span>{{ post.likes }} likes</span>
+                        <span>{{ post.comments.length }} comments</span>
+                    </div>
+                    <div class="post-actions">
+                        <button class="btn" @click="like(post)">Like</button>
+                        <button class="btn" @click="comment(post)">Comment</button>
+                        <button class="btn">Share</button>
+                        <button class="btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="right">
+            <section class="card">
+                <div class="section">
+                    <h3>Trending</h3>
+                    <div class="item"><span>Vue 3 Composition API</span><span>1,234 readers</span></div>
+                    <div class="item"><span>Interview Prep: DSA</span><span>980 readers</span></div>
+                    <div class="item"><span>Deploying with Vite</span><span>742 readers</span></div>
+                </div>
+            </section>
+            <section class="card" style="margin-top:16px">
+                <div class="section">
+                    <h3>People you may know</h3>
+                    <div class="item"><span>Frontend Devs · Pune</span><a href="#">Connect</a></div>
+                    <div class="item"><span>AI/ML Learners · India</span><a href="#">Connect</a></div>
+                    <div class="item"><span>Open Source Clubs</span><a href="#">Follow</a></div>
+                </div>
+            </section>
+        </aside>
+    </main>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+    // Persisted UI state: theme + sidebar
+    (function(){
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+        const savedCollapsed = localStorage.getItem('sidebarCollapsed') === '1';
+        if (savedCollapsed) document.body.classList.add('sidebar-collapsed');
+        window.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('toggle-theme');
+            const sideBtn = document.getElementById('toggle-sidebar');
+            if (themeBtn) themeBtn.addEventListener('click', () => {
+                const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', cur);
+                localStorage.setItem('theme', cur);
+            });
+            if (sideBtn) sideBtn.addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('sidebarCollapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
+            });
+        });
+    })();
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                draft: '',
+                imageUrl: '',
+                avatarSrc: 'assets/rachit.jpg',
+                posts: [
+                    {
+                        id: 1,
+                        author: 'Rachit More',
+                        subtitle: 'CSE Student · Building projects and learning daily',
+                        time: '2h · Public',
+                        body: 'Just completed a responsive landing page and explored basic Vue components. Next up: integrating an API and deploying!',
+                        image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
+                        likes: 12,
+                        comments: [{ id: 1, text: 'Great work!' }]
+                    }
+                ]
+            };
+        },
+        computed: {
+            canPublish() { return this.draft.trim().length > 0; }
+        },
+        methods: {
+            initials(name) {
+                return name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+            },
+            isRachit(name) {
+                return (name || '').toLowerCase().replace(/\s+/g,' ').trim() === 'rachit more';
+            },
+            publish() {
+                if (!this.canPublish) return;
+                const now = new Date();
+                this.posts.unshift({
+                    id: Date.now(),
+                    author: 'Rachit More',
+                    subtitle: 'CSE Student · Building projects and learning daily',
+                    time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · Just now',
+                    body: this.draft.trim(),
+                    image: this.imageUrl.trim() || '',
+                    likes: 0,
+                    comments: []
+                });
+                this.draft = '';
+                this.imageUrl = '';
+            },
+            like(post) { post.likes += 1; },
+            comment(post) {
+                const text = prompt('Write a comment:');
+                if (text && text.trim()) post.comments.push({ id: Date.now(), text: text.trim() });
+            }
+        }
+    }).mount('#app');
+    </script>
+</body>
+</html>
+
