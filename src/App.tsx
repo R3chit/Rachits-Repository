@@ -229,7 +229,7 @@ function App() {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
+    <div className={`min-h-screen transition-colors duration-300 flex flex-col ${
       isDarkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-sfit-green/10 to-sfit-red/10'
     }`}>
       {/* Header */}
@@ -286,7 +286,7 @@ function App() {
       </header>
 
       {/* Main Chat Container */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-6 flex-1 overflow-y-auto">
         {/* Welcome Message */}
         {messages.length === 0 && (
           <motion.div
@@ -314,7 +314,7 @@ function App() {
         )}
 
         {/* Messages */}
-        <div className={`space-y-4 mb-6 ${messages.length > 0 ? 'mt-8' : ''}`}>
+        <div className={`space-y-4 mb-6 min-h-[400px] overflow-y-auto ${messages.length > 0 ? 'mt-8' : ''}`}>
           <AnimatePresence>
             {messages.map((message) => (
               <ChatMessage

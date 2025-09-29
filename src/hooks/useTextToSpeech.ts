@@ -33,17 +33,21 @@ export const useTextToSpeech = (): TextToSpeechHook => {
     // Try to find a suitable voice (Hindi or English)
     const voices = speechSynthesis.getVoices()
     const hindiVoice = voices.find(voice => 
-      voice.lang.includes('hi') || voice.lang.includes('HI')
+      voice.lang.includes('hi') || voice.lang.includes('HI') || voice.name.includes('Hindi')
     )
     const englishVoice = voices.find(voice => 
-      voice.lang.includes('en') || voice.lang.includes('EN')
+      voice.lang.includes('en') || voice.lang.includes('EN') || voice.name.includes('English')
     )
     
     // Use Hindi voice if available, otherwise English
     if (hindiVoice) {
       utterance.voice = hindiVoice
+      utterance.lang = 'hi-IN'
     } else if (englishVoice) {
       utterance.voice = englishVoice
+      utterance.lang = 'en-IN'
+    } else {
+      utterance.lang = 'en-IN' // Default to English
     }
 
     utterance.onstart = () => {

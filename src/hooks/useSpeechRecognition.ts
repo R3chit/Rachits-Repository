@@ -31,7 +31,7 @@ export const useSpeechRecognition = (): SpeechRecognitionHook => {
       
       recognitionInstance.continuous = false
       recognitionInstance.interimResults = true
-      recognitionInstance.lang = 'hi-IN,en-IN' // Hindi and English for India
+      recognitionInstance.lang = 'hi-IN' // Hindi first, then English
       recognitionInstance.maxAlternatives = 1
 
       recognitionInstance.onstart = () => {
