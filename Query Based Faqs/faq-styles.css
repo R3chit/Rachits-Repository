@@ -1,0 +1,134 @@
+/* FAQ Section Styles */
+.faq-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    border-radius: 15px;
+    border: 2px solid #e3f2fd;
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.1);
+}
+
+.faq-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e3f2fd;
+}
+
+.faq-header h3 {
+    color: #1976d2;
+    font-size: 1.5em;
+    margin-bottom: 8px;
+}
+
+.faq-header p {
+    color: #666;
+    font-style: italic;
+}
+
+.generated-faqs {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.faq-category {
+    margin-bottom: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.faq-category-title {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.faq-category-title:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    transform: translateY(-2px);
+}
+
+.faq-list {
+    padding: 0;
+}
+
+.faq-item {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    padding: 15px 20px;
+    background: #fafafa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #333;
+}
+
+.faq-question:hover {
+    background: #f0f8ff;
+    color: #1976d2;
+    padding-left: 25px;
+}
+
+.faq-answer {
+    padding: 15px 20px;
+    background: white;
+    border-left: 4px solid #4CAF50;
+    margin-left: 10px;
+    color: #555;
+    line-height: 1.6;
+    display: none;
+}
+
+.faq-answer i {
+    color: #4CAF50;
+    margin-right: 8px;
+}
+
+.faq-export {
+    margin-top: 20px;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    border-radius: 10px;
+    border: 2px dashed #667eea;
+}
+
+.export-btn, .copy-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 0 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-btn:hover, .copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
